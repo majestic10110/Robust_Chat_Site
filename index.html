@@ -5,253 +5,53 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>ROBUST CHAT — Link500 & Teensy RPR TNC</title>
   <meta name="description" content="ROBUST CHAT is a lightweight desktop app for amateur radio text messaging using Link500 and Teensy RPR TNC devices.">
-  <meta property="og:title" content="ROBUST CHAT — Link500 & Teensy RPR TNC">
-  <meta property="og:description" content="A simple, robust chat program for amateur radio operators.">
-  <meta property="og:type" content="website">
-  <meta property="og:image" content="https://dummyimage.com/1200x630/1a1a1a/00ff00&text=ROBUST+CHAT">
-  <meta name="theme-color" content="#1a1a1a">
-
-  <!-- VT323 (retro terminal) + Inter for body -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=VT323&display=swap" rel="stylesheet">
-
   <style>
-    :root{
-      --bg:#0f0f14;
-      --panel:#15151d;
-      --accent:#00ff7b;
-      --accent-2:#00cc5f;
-      --text:#e8f1ef;
-      --muted:#8b8b9a;
-      --warning:#ffcc00;
-      --link500:#8df; /* hint for Link500 tag */
-      --orange:#ffa500;
-      --red:#ff4d4d;
-      --shadow: 0 10px 30px rgba(0,0,0,.45);
-      --radius:18px;
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font:16px/1.5 Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,"Helvetica Neue",Arial,"Apple Color Emoji","Segoe UI Emoji";
-      color:var(--text);
-      background: radial-gradient(1200px 600px at 20% -10%, #122, transparent 60%),
-                  radial-gradient(1000px 500px at 120% 10%, #121, transparent 60%),
-                  var(--bg);
-    }
-    .wrap{max-width:1000px;margin:0 auto;padding:28px}
-    header{display:flex;align-items:center;justify-content:space-between;gap:16px}
-    .brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--text)}
-    .logo{
-      width:38px;height:38px;border-radius:10px;
-      background: conic-gradient(from 210deg, #0a0, #0f8, #0a0);
-      display:grid;place-items:center;
-      box-shadow:var(--shadow);
-    }
-    .logo span{font-family:"VT323",monospace;font-size:22px;letter-spacing:2px}
-    .title{
-      font-family:"VT323",monospace;
-      font-size:26px;letter-spacing:2px;
-    }
-    nav a{
-      color:var(--text);opacity:.85;text-decoration:none;margin-left:18px;
-    }
-    nav a:hover{opacity:1;color:var(--accent)}
-    .hero{
-      margin:42px 0 22px;
-      display:grid;grid-template-columns:1.1fr .9fr;gap:28px;
-      align-items:center;
-    }
-    .card{
-      background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00)) , var(--panel);
-      border:1px solid rgba(255,255,255,.06);
-      border-radius:var(--radius);
-      padding:26px;
-      box-shadow:var(--shadow);
-    }
-    h1{
-      margin:0 0 10px;
-      font-size:44px;
-      font-family:"VT323",monospace;
-      letter-spacing:2px;
-      color:var(--accent);
-      text-shadow:0 0 22px rgba(0,255,123,.2);
-    }
-    .subtitle{color:var(--muted);max-width:56ch}
-    .badges{margin:16px 0 22px;display:flex;gap:10px;flex-wrap:wrap}
-    .badge{
-      padding:6px 10px;border-radius:999px;font-size:13px;
-      background:#0f2430;border:1px solid rgba(255,255,255,.08);color:#bfe8ff
-    }
-    .badge.link500{background:#0d2233;color:#bfe8ff;border-color:#1e3b59}
-    .badge.orange{background:#2a1f00;color:#ffd48a;border-color:#4e3b08}
-    .ctas{display:flex;gap:12px;flex-wrap:wrap}
-    .btn{
-      appearance:none;border:0;cursor:pointer;
-      padding:12px 16px;border-radius:12px;
-      background:linear-gradient(180deg, var(--accent), var(--accent-2));
-      color:#0c1915;font-weight:700;text-decoration:none;
-      box-shadow:0 10px 20px rgba(0,255,123,.15);
-      transition:.2s transform, .2s box-shadow, .2s filter;
-    }
-    .btn:hover{transform:translateY(-1px);box-shadow:0 12px 24px rgba(0,255,123,.25)}
-    .btn.secondary{
-      background:#23232f;color:var(--text);border:1px solid rgba(255,255,255,.08);
-      box-shadow:none;
-    }
-    .screenshot{
-      min-height:240px;border-radius:var(--radius);
-      border:1px dashed rgba(255,255,255,.1);
-      display:grid;place-items:center;
-      color:var(--muted);text-align:center;padding:18px;
-      font-family:"VT323",monospace;font-size:18px;letter-spacing:1px;
-    }
-    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:26px 0}
-    .feature{padding:18px;border-radius:14px;background:#13141b;border:1px solid rgba(255,255,255,.06)}
-    .feature h3{margin:0 0 6px;font-size:18px}
-    .muted{color:var(--muted);font-size:14px}
-    .donate.card{text-align:center}
-    .donate .hint{font-size:14px;color:var(--muted)}
-    .donate form{margin-top:14px}
-    footer{margin:40px 0 12px;color:var(--muted);font-size:14px;text-align:center}
-    code{background:#0e0e14;padding:2px 6px;border-radius:6px;border:1px solid rgba(255,255,255,.06)}
-    .legal{font-size:12px;color:#9aa3a8;margin-top:8px}
-    @media (max-width:900px){
-      .hero{grid-template-columns:1fr}
-    }
+    body{margin:0;font:16px/1.5 Inter,system-ui;background:#0f0f14;color:#e8f1ef}
+    .wrap{max-width:900px;margin:0 auto;padding:28px}
+    h1{font-family:"VT323",monospace;color:#00ff7b}
+    .btn{display:inline-block;padding:12px 16px;margin:4px;border-radius:8px;
+        text-decoration:none;font-weight:bold}
+    .btn{background:#00ff7b;color:#0f0f14}
+    .btn.secondary{background:#23232f;color:#fff}
+    img{max-width:100%;border-radius:10px}
+    .donate{margin-top:32px;padding:20px;border:1px solid #333;border-radius:8px;background:#15151d;text-align:center}
+    .donate h2{font-family:"VT323",monospace;color:#ffcc00;margin-top:0}
+    .donate p{color:#aaa}
+    footer{margin:40px 0;text-align:center;color:#888;font-size:14px}
   </style>
 </head>
 <body>
   <div class="wrap">
-    <header>
-      <a class="brand" href="#top">
-        <div class="logo"><span>RC</span></div>
-        <div class="title">ROBUST CHAT</div>
-      </a>
-      <nav>
-        <a href="#features">Features</a>
-        <a href="#donate">Donate</a>
-        <a href="#contact">Contact</a>
-      </nav>
-    </header>
+    <h1>Welcome to ROBUST CHAT</h1>
+    <p>
+      Programmed by Artificial Intelligence with the help of Oliver Cohen <strong>M0OLI</strong>. 
+      A lightweight desktop program for amateur radio text messaging, built for 
+      Link500 and Teensy RPR TNC devices.
+    </p>
 
-    <section class="hero">
-      <div class="card">
-        <h1>Simple, sturdy radio chat.</h1>
-        <p class="subtitle">Welcome to <strong>ROBUST CHAT</strong>, programmed by Artificial Intelligence with the help of Oliver Cohen <strong>M0OLI</strong>. It is a lightweight desktop program for amateur radio text messaging, built for <strong class="badge link500">Link500</strong> and <strong class="badge orange">Teensy&nbsp;RPR&nbsp;TNC</strong> devices.</p>
+    <p>
+      <a class="btn" href="https://drive.google.com/drive/folders/1YWG1WdnSl9yJcV1gUq-lT6Ze3UAo1xDj?usp=drive_link" target="_blank" rel="noopener">💻 Get the App (Windows)</a>
+      <a class="btn secondary" href="https://github.com/majestic10110/Teensy-Tracker-Robust-Packet-Chat-Program" target="_blank" rel="noopener">GitHub Repo</a>
+    </p>
 
-        <div class="badges">
-          <span class="badge link500">Link500‑compatible</span>
-          <span class="badge orange">Teensy RPR TNC</span>
-          <span class="badge">KISS mode aware</span>
-          <span class="badge">GPS beacons</span>
-          <span class="badge">Fleet/whitelist</span>
-        </div>
+    <div>
+      <img src="screenshot.png" alt="Robust Chat Screenshot">
+    </div>
 
-        <div class="ctas">
-          <!-- TODO: replace the # links with your actual download / docs / repo URLs -->
-          <a class="btn" href="#" id="downloadBtn">Get the App</a>
-          <a class="btn secondary" href="#" id="docsBtn">Docs / README</a>
-        </div>
-
-        <p class="muted" style="margin-top:10px">
-          <strong>v1.3.9.f</strong> &middot; Windows (tested). Other platforms may work with Python + PyQt5.
-        </p>
-      </div>
-
-      <div class="screenshot card">
-        <!-- You can swap this placeholder for a real screenshot (PNG/JPG). -->
-        Drop a UI screenshot here (1200×750 recommended).<br>
-        <span class="muted">Tip: name the file <code>screenshot.png</code> and place it next to this <code>index.html</code>.</span>
-      </div>
-    </section>
-
-    <section id="features" class="grid">
-      <div class="feature">
-        <h3>Fleet Manager</h3>
-        <p class="muted">Create groups, whitelist callsigns, and filter traffic. Designed for net control and organised operations.</p>
-      </div>
-      <div class="feature">
-        <h3>ACK Logic</h3>
-        <p class="muted">Send/receive ACKs with configurable pause (default 12s). Message colour cues for sent, received, and ACKed.</p>
-      </div>
-      <div class="feature">
-        <h3>GPS & Beacons</h3>
-        <p class="muted">Quick “GPS SEND” with position format ready for on‑air exchange. Optional 15‑minute beacon timer.</p>
-      </div>
-      <div class="feature">
-        <h3>Lightweight UI</h3>
-        <p class="muted">Retro terminal aesthetic, large readable fonts (<code>VT323</code>), and keyboard shortcuts for fast operation.</p>
-      </div>
-      <div class="feature">
-        <h3>Portable Setup</h3>
-        <p class="muted">Zero servers. Just your radio + TNC. Works well for ad‑hoc field deployments and emergency comms.</p>
-      </div>
-    </section>
-
-    <section id="donate" class="donate card">
-      <h2 style="margin:0 0 6px;font-family:'VT323',monospace;letter-spacing:1px;">Support ROBUST CHAT</h2>
-      <p class="hint">If this tool helps you, a small donation helps cover hosting, the domain, and ongoing development. Thank you!</p>
-
-      <!--
-        === Pick ONE of the donation methods below ===
-        1) PayPal.me link (simplest): replace PAYPAL_ME_USERNAME with your PayPal.me name.
-           Example: https://paypal.me/YourName/5 (optional amount)
-        2) Classic PayPal hosted button: replace hosted_button_id with your own ID.
-           Create at https://www.paypal.com/buttons/
-      -->
-
-      <!-- Option 1: PayPal.me button (uncomment, then set your username) -->
-      <!--
-      <p>
-        <a class="btn" href="https://paypal.me/PAYPAL_ME_USERNAME" target="_blank" rel="noopener">Donate via PayPal</a>
-      </p>
-      -->
-
-      <!-- Option 2: Classic PayPal “Donate” button (works without JavaScript) -->
+    <div class="donate">
+      <h2>Support ROBUST CHAT</h2>
+      <p>If this tool helps you, a small donation helps cover hosting, the domain, and ongoing development.</p>
       <form action="https://www.paypal.com/donate/?hosted_button_id=6C6SNQGWPJS34" method="post" target="_blank">
-        <!-- TODO: Replace with your real hosted button ID -->
-        <input type="hidden" name="hosted_button_id" value="6C6SNQGWPJS34">
-        <input type="hidden" name="business" value="">
-        <input type="hidden" name="item_name" value="Support ROBUST CHAT">
-        <input type="hidden" name="currency_code" value="GBP">
-        <button class="btn" type="submit" aria-label="Donate via PayPal">Donate via PayPal</button>
+        <button class="btn" type="submit">Donate via PayPal</button>
       </form>
-
-      <p class="legal">Amateur radio only. Please operate within your licence and local regulations.</p>
-    </section>
-
-    <section id="contact" class="card" style="margin-top:22px">
-      <h2 style="margin:0 0 10px;font-family:'VT323',monospace;letter-spacing:1px;">Contact</h2>
-      <p class="muted">Questions, feature ideas, bug reports? Send an email.</p>
-      <!-- TODO: set your real email in the mailto below -->
-      <p><a class="btn secondary" href="mailto:you@example.com?subject=ROBUST%20CHAT%20Enquiry">Email the developer</a></p>
-    </section>
+    </div>
 
     <footer>
-      © <span id="y"></span> ROBUST CHAT. All rights reserved.
+      © <script>document.write(new Date().getFullYear())</script> ROBUST CHAT
     </footer>
   </div>
-
-  <script>
-    // Set current year
-    document.getElementById('y').textContent = new Date().getFullYear();
-
-    // Optional: If you later add real links, ensure buttons aren't dead.
-    document.getElementById('downloadBtn').addEventListener('click', function(e){
-      if(this.getAttribute('href') === '#'){
-        e.preventDefault();
-        alert('Replace the "Get the App" link with your real download URL.');
-      }
-    });
-    document.getElementById('docsBtn').addEventListener('click', function(e){
-      if(this.getAttribute('href') === '#'){
-        e.preventDefault();
-        alert('Replace the "Docs / README" link with your real documentation URL.');
-      }
-    });
-  </script>
 </body>
 </html>
